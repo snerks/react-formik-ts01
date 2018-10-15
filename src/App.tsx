@@ -2,7 +2,9 @@ import * as React from "react";
 import "./App.css";
 
 // import logo from './logo.svg';
-import Basic from "./basic";
+// import Basic from "./basic";
+// import { BasicSfc } from "./basic-sfc";
+import { FriendList } from "./friend-list";
 
 class App extends React.Component {
   public render() {
@@ -17,7 +19,8 @@ class App extends React.Component {
       //   </p>
       // </div>
       <div className="container-fluid" style={{ padding: 15 }}>
-        <Basic />
+        {/* <BasicSfc /> */}
+        <FriendList />
       </div>
     );
   }
