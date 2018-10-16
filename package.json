@@ -24,6 +24,7 @@
     "@types/node": "^10.11.7",
     "@types/react": "^16.4.16",
     "@types/react-dom": "^16.0.9",
+    "@types/yup": "^0.26.0",
     "typescript": "^3.1.3"
   },
   "homepage": "https://snerks.github.io/react-formik-ts01"

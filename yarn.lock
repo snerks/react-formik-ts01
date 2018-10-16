@@ -52,6 +52,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/yup@^0.26.0":
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/@types/yup/-/yup-0.26.0.tgz#7d3d8a4dd61875dfd3a7fc76ec8d1aa8722d6131"
+
 abab@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"

@@ -4,8 +4,7 @@ import {
   withFormik,
   Field,
   FieldProps,
-  Form /*, FormikState */,
-  FieldArray
+  Form /*, FormikState */
 } from "formik";
 
 // const CustomInputTextComponent: React.SFC<FieldProps<any>> = ({
@@ -78,13 +77,7 @@ const CustomInputCheckboxComponent: React.SFC<
   FieldProps<Show> & LabelOptions
 > = ({ field, form: { touched, errors }, ...props }) => (
   <div className="form-check form-check-inline">
-    <input
-      className="form-check-input"
-      type="checkbox"
-      {...field}
-      {...props}
-      checked={field.value}
-    />
+    <input className="form-check-input" type="checkbox" {...field} {...props} />
     <label className="form-check-label" htmlFor={field.name}>
       {props.labeltext
         ? props.labeltext
@@ -107,7 +100,13 @@ const CustomInputCheckboxComponent: React.SFC<
   //   </div>
 );
 
-export interface Show {
+interface ShowContainer {
+  show: Show;
+}
+
+type ShowContainerPartial = Partial<ShowContainer>;
+
+interface Show {
   id?: string;
   eventIdBts?: string;
   addedDate?: Date;
@@ -128,28 +127,29 @@ export interface Show {
   detailsUri?: string;
 }
 
-export interface Artist {
+interface Artist {
   name: string;
   stageTime?: string;
 
   videoUrl?: string;
 }
 
-export type ShowPartial = Partial<Show>;
+// type ShowPartial = Partial<Show>;
 
 // Show & {handleSubmit: Function}
 
-const ShowFormCore: React.SFC<
-  InjectedFormikProps<ShowPartial, Show>
+const ShowObjectFormCore: React.SFC<
+  InjectedFormikProps<ShowContainerPartial, ShowContainer>
 > = props => {
   const {
-    values,
+    // values,
     // touched,
     // errors,
     // handleChange,
     // handleBlur,
     // handleSubmit,
-    isSubmitting
+    isSubmitting,
+    show
   } = props;
   return (
     // <form onSubmit={handleSubmit}>
@@ -161,131 +161,65 @@ const ShowFormCore: React.SFC<
         value={values.name}
         name="name"
       /> */}
-      <Field name="date" component={CustomInputDateComponent} />
-      <Field name="venue" component={CustomInputTextComponent} />
-
-      <FieldArray
-        name="artists"
-        render={arrayHelpers => (
-          <div className="clearfix">
-            {values.artists
-              ? values.artists.map((artist, index) => (
-                  <div key={index}>
-                    <label>Artist Name {index + 1}</label>
-                    <div className="form-inline">
-                      <Field
-                        name={`artists.${index}.name`}
-                        className="form-group mb-2 form-control"
-                      />
-                      {/* <Field
-                        name={`artists.${index}.stageTime`}
-                        className="form-group mx-sm-3 mb-2 form-control"
-                      /> */}
-                      {/* // both these conventions do the same */}
-                      {/* <input className="form-control" {...field} {...props} /> */}
-
-                      {/* <Field
-                      name={`artist[${index}]name`}
-                      component={CustomInputTextComponent}
-                    />
-                    <Field
-                      name={`artist[${index}]stageTime`}
-                      component={CustomInputTextComponent}
-                    /> */}
-
-                      <button
-                        type="button"
-                        className="btn btn-outline-dark btn-sm mb-2"
-                        onClick={() => arrayHelpers.remove(index)}
-                      >
-                        -
-                      </button>
-                    </div>
-                  </div>
-                ))
-              : null}
-
-            <button
-              className="btn btn-outline-dark btn-sm float-left"
-              type="button"
-              onClick={() => arrayHelpers.push({ name: "", stageTime: "" })}
-            >
-              Add Artist
-            </button>
-          </div>
-        )}
+      <Field
+        name="date"
+        component={CustomInputDateComponent}
+        value={show && show.date ? show.date : new Date()}
       />
-
-      <hr />
-
-      <div className="clearfix">
-        <div className="form-group float-right">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isSubmitting}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-
-      <hr />
-
-      <Field name="notes" component={CustomInputTextComponent} />
+      <Field
+        name="venue"
+        component={CustomInputTextComponent}
+        value={show && show.venue}
+      />
       {/* {errors.name && touched.name && <div id="feedback">{errors.name}</div>} */}
 
       <Field
         name="isSoldOut"
         component={CustomInputCheckboxComponent}
         labeltext="Sold Out"
+        value={show && show.isSoldOut}
       />
       <Field
         name="isCancelled"
         component={CustomInputCheckboxComponent}
         labeltext="Cancelled"
+        value={show && show.isCancelled}
       />
 
-      {/* <Field name="notes" component={CustomInputTextComponent} /> */}
-      <hr />
-
-      <div className="clearfix">
-        <div className="form-group float-right">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isSubmitting}
-          >
-            Submit
-          </button>
-        </div>
+      <div className="form-group">
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={isSubmitting}
+        >
+          Submit
+        </button>
       </div>
-
-      <hr />
     </Form>
     // </form>
   );
 };
 
-export const ShowForm = withFormik<ShowPartial, Show>({
+export const ShowObjectForm = withFormik<ShowContainerPartial, ShowContainer>({
   mapPropsToValues: props => ({
-    date: props.date || new Date(),
-    venue: props.venue || "",
-    artists: props.artists || [],
-    isSoldOut: props.isSoldOut || false,
-    isCancelled: props.isCancelled || false,
-    notes: props.notes || ""
+    show: props.show || {
+      date: new Date(),
+      venue: "",
+      isSoldOut: false,
+      isCancelled: false,
+      artists: []
+    }
   }),
 
   // Custom sync validation
   validate: values => {
     const errors: any = {};
 
-    if (!values.date) {
+    if (!values.show.date) {
       errors.date = "Please choose a date";
     }
 
-    if (!values.venue) {
+    if (!values.show.venue) {
       errors.venue = "Please choose a venue";
     }
 
@@ -294,17 +228,11 @@ export const ShowForm = withFormik<ShowPartial, Show>({
 
   handleSubmit: (values, { setSubmitting }) => {
     setTimeout(() => {
-      const valuesClone = JSON.parse(JSON.stringify(values));
-      valuesClone.notes =
-        valuesClone.notes === "" ? undefined : valuesClone.notes;
-
-      // alert(JSON.stringify(values, null, 2));
-      alert(JSON.stringify(valuesClone, null, 2));
-
+      alert(JSON.stringify(values.show, null, 2));
       setSubmitting(false);
     }, 1000);
   },
 
   // Useful for React Developer Tools
-  displayName: "ShowForm"
-})(ShowFormCore);
+  displayName: "ShowObjectForm"
+})(ShowObjectFormCore);
