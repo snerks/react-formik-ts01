@@ -57,8 +57,10 @@ const CustomInputDateComponent: React.SFC<FieldProps<Show>> = ({
       {...field}
       {...props}
       value={
-        (field.value as Date)
-          ? (field.value as Date).toISOString().substring(0, 10)
+        field.value
+          ? field.value.toISOString
+            ? field.value.toISOString().substring(0, 10)
+            : field.value
           : ""
       }
     />
